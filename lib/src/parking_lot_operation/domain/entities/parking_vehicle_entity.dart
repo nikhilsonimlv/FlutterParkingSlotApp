@@ -14,7 +14,8 @@ class ParkingVehicleEntity extends Equatable {
   final int? id;
   final String? carSize;
   final String? carNumber;
-  final int? floorNumber;
+  final String? floorNumber;
+  final int? bayNumber;
   @ColumnInfo(name: "car_slot_id")
   final String? carSlotId;
   final String? allocatedSlotType;
@@ -24,7 +25,8 @@ class ParkingVehicleEntity extends Equatable {
     this.id,
     this.carSize = "",
     this.carNumber = "",
-    this.floorNumber = 0,
+    this.floorNumber = "A",
+    this.bayNumber,
     this.carSlotId,
     this.allocatedSlotType = "",
     this.isParked = false,

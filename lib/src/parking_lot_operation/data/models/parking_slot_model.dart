@@ -5,7 +5,8 @@ class ParkingSlotModel extends ParkingSlotEntity {
     required super.id,
     required super.slotID,
     required super.slotSize,
-    required super.floor,
+    required super.floorName,
+    required super.customBayId,
     required super.isOccupied,
   });
 
@@ -14,7 +15,8 @@ class ParkingSlotModel extends ParkingSlotEntity {
       'id': id,
       'slotID': slotID,
       'lotID': slotSize,
-      'floor': floor,
+      'floor': floorName,
+      'customBayId': customBayId,
       'isOccupied': isOccupied,
     };
   }
@@ -24,7 +26,8 @@ class ParkingSlotModel extends ParkingSlotEntity {
       id: map['id'] as int,
       slotID: map['slotID'] as String,
       slotSize: map['slotSize'] as String,
-      floor: map['floor'] as int,
+      floorName: map['floor'] as String,
+      customBayId: map['customBayId'] as int,
       isOccupied: map['isOccupied'] as bool,
     );
   }
@@ -32,16 +35,17 @@ class ParkingSlotModel extends ParkingSlotEntity {
   ParkingSlotModel copyWith({
     int? id,
     String? slotID,
-    int? floor,
-    int? sizeID,
-    int? slotNumber,
+    String? slotSize,
+    String? floorName,
+    int? customBayId,
     bool? isOccupied,
   }) {
     return ParkingSlotModel(
       id: id ?? this.id,
       slotID: slotID ?? this.slotID,
-      slotSize: slotSize,
-      floor: floor ?? this.floor,
+      slotSize: slotSize ?? this.slotSize,
+      floorName: floorName ?? this.floorName,
+      customBayId: customBayId ?? this.customBayId,
       isOccupied: isOccupied ?? this.isOccupied,
     );
   }
@@ -51,7 +55,8 @@ class ParkingSlotModel extends ParkingSlotEntity {
       id: parkingLotEntity.id,
       slotID: parkingLotEntity.slotID,
       slotSize: parkingLotEntity.slotSize,
-      floor: parkingLotEntity.floor,
+      floorName: parkingLotEntity.floorName,
+      customBayId: parkingLotEntity.customBayId,
       isOccupied: parkingLotEntity.isOccupied,
     );
   }
@@ -62,7 +67,8 @@ class ParkingSlotModel extends ParkingSlotEntity {
         id: entity.id,
         slotID: entity.slotID,
         slotSize: entity.slotSize,
-        floor: entity.floor,
+        floorName: entity.floorName,
+        customBayId: entity.customBayId,
         isOccupied: entity.isOccupied,
       );
     }).toList();

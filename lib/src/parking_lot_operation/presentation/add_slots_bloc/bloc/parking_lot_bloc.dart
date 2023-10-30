@@ -5,23 +5,28 @@ import 'package:equatable/equatable.dart';
 import 'package:parkingslot/src/core/params/params.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/add_parking_slot_info_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_available_parking_slot_by_car_size_use_case.dart';
+import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_number_of_parking_slots_by_floor_name_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_parking_slots_by_car_size_use_case.dart';
 
 part 'parking_lot_event.dart';
+
 part 'parking_lot_state.dart';
 
 class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
   final AddParkingSlotInfoUseCase _addParkingSlotInfoUseCase;
   final GetAvailableParkingSlotByCarSizeUseCase _getAvailableParkingSlotByCarSizeUseCase;
   final GetParkingSlotsByCarSizeUseCase _getParkingSlotsByCarSizeUseCase;
+  final GetNumberOfParkingSlotsByFloorNameUseCase _getNumberOfParkingSlotsByFloorNameUseCase;
 
   ParkingLotBloc({
     required GetAvailableParkingSlotByCarSizeUseCase getAvailableParkingSlotByCarSizeUseCase,
     required AddParkingSlotInfoUseCase addParkingSlotInfoUseCase,
     required GetParkingSlotsByCarSizeUseCase getParkingSlotsByCarSizeUseCase,
+    required GetNumberOfParkingSlotsByFloorNameUseCase getNumberOfParkingSlotsByFloorNameUseCase,
   })  : _addParkingSlotInfoUseCase = addParkingSlotInfoUseCase,
         _getAvailableParkingSlotByCarSizeUseCase = getAvailableParkingSlotByCarSizeUseCase,
         _getParkingSlotsByCarSizeUseCase = getParkingSlotsByCarSizeUseCase,
+        _getNumberOfParkingSlotsByFloorNameUseCase = getNumberOfParkingSlotsByFloorNameUseCase,
         super(
           const ParkingLotState(),
         ) {
@@ -57,23 +62,41 @@ class ParkingLotBloc extends Bloc<ParkingLotEvent, ParkingLotState> {
   }
 
   FutureOr<void> _addParkingSlotsHandler(AddParkingSlotsEvent event, Emitter<ParkingLotState> emit) async {
-    emit(state.copyWith(parkingSlotStatus: ParkingSlotStatus.addingParkingSlots));
+    try {
+      emit(state.copyWith(parkingSlotStatus: ParkingSlotStatus.addingParkingSlots));
 
-    final result = await _addParkingSlotInfoUseCase(ParkingSlotParams(
-      floorNumber: event.floorNumber,
-      numberOfSmallSlots: event.numberOfSmallSlots,
-      numberOfLargeSlots: event.numberOfLargeSlots,
-      numberOfMediumSlots: event.numberOfMediumSlots,
-      numberOfExtraLargeSlots: event.numberOfExtraLargeSlots,
-    ));
-    result.fold(
-      (failure) => emit(
-        state.copyWith(parkingSlotStatus: ParkingSlotStatus.parkingSlotError, errorMessage: failure.errorMessage),
-      ),
-      (parkingSlots) => emit(
-        state.copyWith(parkingSlotStatus: ParkingSlotStatus.parkingSlotsAdded, floorNumber: event.floorNumber),
-      ),
-    );
+      final numberOfExistingSlots = await _getNumberOfParkingSlotsByFloorNameUseCase(event.floorNumber);
+      final int numberOfSlots = numberOfExistingSlots.getOrElse(() => 0);
+
+      final result = await _addParkingSlotInfoUseCase(ParkingSlotParams(
+        existingNumberOfSlotsInFloor: numberOfSlots,
+        floorNumber: event.floorNumber,
+        numberOfSmallSlots: event.numberOfSmallSlots,
+        numberOfLargeSlots: event.numberOfLargeSlots,
+        numberOfMediumSlots: event.numberOfMediumSlots,
+        numberOfExtraLargeSlots: event.numberOfExtraLargeSlots,
+      ));
+
+      result.fold(
+        (failure) {
+          emit(state.copyWith(
+            parkingSlotStatus: ParkingSlotStatus.parkingSlotError,
+            errorMessage: failure.errorMessage,
+          ));
+        },
+        (parkingSlots) {
+          emit(state.copyWith(
+            parkingSlotStatus: ParkingSlotStatus.parkingSlotsAdded,
+            floorNumber: event.floorNumber,
+          ));
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(
+        parkingSlotStatus: ParkingSlotStatus.parkingSlotError,
+        errorMessage: e.toString(),
+      ));
+    }
   }
 
   FutureOr<void> _tabChangeHandler(TabChangeEvent event, Emitter<ParkingLotState> emit) {

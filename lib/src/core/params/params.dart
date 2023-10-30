@@ -43,11 +43,12 @@ enum NavbarItem { addSlot, parkCar }
 final carSlotTypeValues = EnumValues({"Small": CarSize.small, "Large": CarSize.large, "Medium": CarSize.medium, "XL": CarSize.xl});
 
 class ParkingSlotParams {
-  final int floorNumber;
+  final String floorNumber;
   final int numberOfSmallSlots;
   final int numberOfLargeSlots;
   final int numberOfMediumSlots;
   final int numberOfExtraLargeSlots;
+  final int existingNumberOfSlotsInFloor;
 
   ParkingSlotParams({
     required this.floorNumber,
@@ -55,6 +56,7 @@ class ParkingSlotParams {
     required this.numberOfLargeSlots,
     required this.numberOfMediumSlots,
     required this.numberOfExtraLargeSlots,
+    required this.existingNumberOfSlotsInFloor,
   });
 }
 

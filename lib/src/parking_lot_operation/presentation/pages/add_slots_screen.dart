@@ -4,6 +4,7 @@ import 'package:parkingslot/src/core/params/params.dart';
 import 'package:parkingslot/src/core/utils/constants.dart';
 import 'package:parkingslot/src/parking_lot_operation/presentation/add_slots_bloc/bloc/parking_lot_bloc.dart';
 import 'package:parkingslot/src/parking_lot_operation/presentation/widgets/custom_elevated_button.dart';
+import 'package:parkingslot/src/parking_lot_operation/presentation/widgets/floor_drop_down.dart';
 import 'package:parkingslot/src/parking_lot_operation/presentation/widgets/slot_info.dart';
 import 'package:parkingslot/src/parking_lot_operation/presentation/widgets/slot_widget.dart';
 
@@ -48,9 +49,16 @@ class _AddSlotsScreenState extends State<AddSlotsScreen> {
     super.dispose();
   }
 
+  String selectedFloor = 'A';
+
+  void handleFloorSelection(String? floor) {
+    if (floor != null) {
+      selectedFloor = floor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    const List<int> floorList = <int>[1, 2, 3];
     return BlocConsumer<ParkingLotBloc, ParkingLotState>(
       listener: (context, state) {
         if (state.parkingSlotStatus == ParkingSlotStatus.parkingSlotError) {
@@ -64,7 +72,6 @@ class _AddSlotsScreenState extends State<AddSlotsScreen> {
         }
       },
       builder: (context, state) {
-        int selectedFloor = 1;
         return SafeArea(
           child: Scaffold(
             body: Stack(
@@ -82,7 +89,7 @@ class _AddSlotsScreenState extends State<AddSlotsScreen> {
                       ),
                       const Padding(
                         padding: EdgeInsets.only(left: 8.0),
-                        child:  Text("Slot Status"),
+                        child: Text("Slot Status"),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -127,20 +134,8 @@ class _AddSlotsScreenState extends State<AddSlotsScreen> {
                         children: [
                           const Expanded(child: Align(alignment: Alignment.center, child: Text(AppConstant.selectFloor))),
                           Expanded(
-                            child: DropdownButton<int>(
-                              isExpanded: true,
-                              hint: const Text(AppConstant.chooseFloor),
-                              value: state.floorNumber,
-                              items: floorList.map((int floors) {
-                                return DropdownMenuItem<int>(
-                                  value: floors,
-                                  child: Text(floors.toString()),
-                                );
-                              }).toList(),
-                              onChanged: (floorNumber) {
-                                selectedFloor = floorNumber ?? 1;
-//                                context.read<ParkingLotBloc>().add(FloorSelectEvent(floor: floorNumber ?? 1));
-                              },
+                            child: FloorDropDown(
+                              onChanged: handleFloorSelection,
                             ),
                           ),
                         ],
@@ -158,19 +153,27 @@ class _AddSlotsScreenState extends State<AddSlotsScreen> {
                               final numberOfLargeSlots = int.tryParse(_largeCarController.text) ?? 0;
                               final numberOfMediumSlots = int.tryParse(_mediumCarController.text) ?? 0;
                               final numberOfExtraLargeSlots = int.tryParse(_extraLargeCarController.text) ?? 0;
-                              _smallCarController.text = "";
-                              _largeCarController.text = "";
-                              _mediumCarController.text = "";
-                              _extraLargeCarController.text = "";
-                              context.read<ParkingLotBloc>().add(
-                                    AddParkingSlotsEvent(
-                                      numberOfSmallSlots: numberOfSmallSlots,
-                                      numberOfLargeSlots: numberOfLargeSlots,
-                                      numberOfMediumSlots: numberOfMediumSlots,
-                                      numberOfExtraLargeSlots: numberOfExtraLargeSlots,
-                                      floorNumber: selectedFloor,
-                                    ),
-                                  );
+
+                              if (numberOfSmallSlots == 0 && numberOfLargeSlots == 0 && numberOfMediumSlots == 0 && numberOfExtraLargeSlots == 0) {
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                    content: Text(
+                                  "Please enter slots",
+                                )));
+                              } else {
+                                _smallCarController.text = "";
+                                _largeCarController.text = "";
+                                _mediumCarController.text = "";
+                                _extraLargeCarController.text = "";
+                                context.read<ParkingLotBloc>().add(
+                                      AddParkingSlotsEvent(
+                                        numberOfSmallSlots: numberOfSmallSlots,
+                                        numberOfLargeSlots: numberOfLargeSlots,
+                                        numberOfMediumSlots: numberOfMediumSlots,
+                                        numberOfExtraLargeSlots: numberOfExtraLargeSlots,
+                                        floorNumber: selectedFloor,
+                                      ),
+                                    );
+                              }
                             },
                             buttonText: AppConstant.addSlots,
                           ),

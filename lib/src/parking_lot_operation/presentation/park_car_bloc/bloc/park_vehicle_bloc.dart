@@ -77,7 +77,7 @@ class ParkVehicleBloc extends Bloc<ParkVehicleEvent, ParkVehicleState> {
         state.copyWith(parkingVehicleStatus: ParkingVehicleStatus.parkingVehicleError, errorMessage: failure.errorMessage),
       ),
       (parkedVehicleList) => emit(
-        state.copyWith(parkedVehicleList: parkedVehicleList, parkingVehicleStatus: ParkingVehicleStatus.allParkedVehicleSlotsLoaded, updateSlotList: false),
+        state.copyWith(parkedVehicleList: parkedVehicleList.reversed.toList(), parkingVehicleStatus: ParkingVehicleStatus.allParkedVehicleSlotsLoaded, updateSlotList: false),
       ),
     );
   }

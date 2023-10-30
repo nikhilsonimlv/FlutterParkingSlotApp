@@ -8,7 +8,8 @@ class ParkingSlotEntity extends Equatable {
   @ColumnInfo(name: "slot_id")
   final String slotID;
   final String slotSize;
-  final int floor;
+  final String floorName;
+  final int customBayId;
 
   final bool isOccupied;
 
@@ -16,7 +17,8 @@ class ParkingSlotEntity extends Equatable {
     this.id,
     required this.slotID,
     required this.slotSize,
-    required this.floor,
+    required this.floorName,
+    required this.customBayId,
     required this.isOccupied,
   });
 
@@ -24,4 +26,5 @@ class ParkingSlotEntity extends Equatable {
   List<Object?> get props => [
         slotID,
       ];
+
 }

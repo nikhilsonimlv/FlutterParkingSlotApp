@@ -18,7 +18,7 @@ class GetParkingSlotsByCarSizeEvent extends ParkingLotEvent {
 }
 
 class AddParkingSlotsEvent extends ParkingLotEvent {
-  final int floorNumber;
+  final String floorNumber;
   final int numberOfSmallSlots;
   final int numberOfLargeSlots;
   final int numberOfMediumSlots;

@@ -52,4 +52,14 @@ class ParkingLotRepositoryImpl implements ParkingLotRepository {
       return Left(LocalFailure.fromException(e));
     }
   }
+
+  @override
+  ResultingFuture<int> getNumberOfParkingSlotsByFloorName({required String floorName}) async {
+    try {
+      var value = await _parkingLotLocalDataSource.getNumberOfSlotsByFloorName(floorName: floorName);
+      return Right(value ?? 0);
+    } on LocalException catch (e) {
+      return Left(LocalFailure.fromException(e));
+    }
+  }
 }

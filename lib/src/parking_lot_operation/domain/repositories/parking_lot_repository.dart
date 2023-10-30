@@ -11,5 +11,7 @@ abstract class ParkingLotRepository {
 
   ResultingFuture<int> getNumberOfParkingSlotsByCarSize({required CarSize carSize});
 
+  ResultingFuture<int> getNumberOfParkingSlotsByFloorName({required String floorName});
+
   ResultingFuture<int> getNumberOfAvailableParkingSlotsByCarSize({required CarSize carSize});
 }

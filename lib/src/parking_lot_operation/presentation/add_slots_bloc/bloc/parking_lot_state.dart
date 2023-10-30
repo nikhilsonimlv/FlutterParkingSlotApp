@@ -15,7 +15,7 @@ class ParkingLotState extends Equatable {
   final String errorTitle;
   final String errorMessage;
   final int pageIndex;
-  final int floorNumber;
+  final String floorNumber;
 
   const ParkingLotState({
     this.totNoOfSmallSlots = 0,
@@ -30,7 +30,7 @@ class ParkingLotState extends Equatable {
     this.errorTitle = '',
     this.errorMessage = '',
     this.pageIndex = 0,
-    this.floorNumber = 1,
+    this.floorNumber = "A",
   });
 
   ParkingLotState copyWith({
@@ -46,7 +46,7 @@ class ParkingLotState extends Equatable {
     String? errorTitle,
     String? errorMessage,
     int? pageIndex,
-    int? floorNumber,
+    String? floorNumber,
   }) {
     return ParkingLotState(
       totNoOfSmallSlots: totNoOfSmallSlots ?? this.totNoOfSmallSlots,

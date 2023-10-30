@@ -71,7 +71,7 @@ class _$AppDataBase extends AppDataBase {
     Callback? callback,
   ]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 2,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -87,9 +87,9 @@ class _$AppDataBase extends AppDataBase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `ParkingSlotTable` (`id` INTEGER, `slot_id` TEXT NOT NULL, `slotSize` TEXT NOT NULL, `floor` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, PRIMARY KEY (`slot_id`))');
+            'CREATE TABLE IF NOT EXISTS `ParkingSlotTable` (`id` INTEGER, `slot_id` TEXT NOT NULL, `slotSize` TEXT NOT NULL, `floorName` TEXT NOT NULL, `customBayId` INTEGER NOT NULL, `isOccupied` INTEGER NOT NULL, PRIMARY KEY (`slot_id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `VehicleParkingTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `carSize` TEXT, `carNumber` TEXT, `floorNumber` INTEGER, `car_slot_id` TEXT, `allocatedSlotType` TEXT, `isParked` INTEGER, FOREIGN KEY (`car_slot_id`) REFERENCES `ParkingSlotTable` (`slot_id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `VehicleParkingTable` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `carSize` TEXT, `carNumber` TEXT, `floorNumber` TEXT, `bayNumber` INTEGER, `car_slot_id` TEXT, `allocatedSlotType` TEXT, `isParked` INTEGER, FOREIGN KEY (`car_slot_id`) REFERENCES `ParkingSlotTable` (`slot_id`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -122,7 +122,8 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
                   'id': item.id,
                   'slot_id': item.slotID,
                   'slotSize': item.slotSize,
-                  'floor': item.floor,
+                  'floorName': item.floorName,
+                  'customBayId': item.customBayId,
                   'isOccupied': item.isOccupied ? 1 : 0
                 }),
         _parkingSlotEntityUpdateAdapter = UpdateAdapter(
@@ -133,7 +134,8 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
                   'id': item.id,
                   'slot_id': item.slotID,
                   'slotSize': item.slotSize,
-                  'floor': item.floor,
+                  'floorName': item.floorName,
+                  'customBayId': item.customBayId,
                   'isOccupied': item.isOccupied ? 1 : 0
                 }),
         _parkingSlotEntityDeletionAdapter = DeletionAdapter(
@@ -144,7 +146,8 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
                   'id': item.id,
                   'slot_id': item.slotID,
                   'slotSize': item.slotSize,
-                  'floor': item.floor,
+                  'floorName': item.floorName,
+                  'customBayId': item.customBayId,
                   'isOccupied': item.isOccupied ? 1 : 0
                 });
 
@@ -167,7 +170,8 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
             id: row['id'] as int?,
             slotID: row['slot_id'] as String,
             slotSize: row['slotSize'] as String,
-            floor: row['floor'] as int,
+            floorName: row['floorName'] as String,
+            customBayId: row['customBayId'] as int,
             isOccupied: (row['isOccupied'] as int) != 0));
   }
 
@@ -176,7 +180,7 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
       String slotSize) async {
     return _queryAdapter.query(
         'SELECT * FROM ParkingSlotTable WHERE isOccupied = 0 AND slotSize = ?1 LIMIT 1',
-        mapper: (Map<String, Object?> row) => ParkingSlotEntity(id: row['id'] as int?, slotID: row['slot_id'] as String, slotSize: row['slotSize'] as String, floor: row['floor'] as int, isOccupied: (row['isOccupied'] as int) != 0),
+        mapper: (Map<String, Object?> row) => ParkingSlotEntity(id: row['id'] as int?, slotID: row['slot_id'] as String, slotSize: row['slotSize'] as String, floorName: row['floorName'] as String, customBayId: row['customBayId'] as int, isOccupied: (row['isOccupied'] as int) != 0),
         arguments: [slotSize]);
   }
 
@@ -194,6 +198,14 @@ class _$ParkingSlotModelDao extends ParkingSlotModelDao {
         'SELECT COUNT(*) FROM ParkingSlotTable WHERE isOccupied = 0 AND slotSize = ?1',
         mapper: (Map<String, Object?> row) => row.values.first as int,
         arguments: [slotSize]);
+  }
+
+  @override
+  Future<int?> getNumberOfSlotsByFloorName(String floorName) async {
+    return _queryAdapter.query(
+        'SELECT COUNT(*) FROM ParkingSlotTable WHERE floorName = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [floorName]);
   }
 
   @override
@@ -251,6 +263,7 @@ class _$ParkingVehicleModelDao extends ParkingVehicleModelDao {
                   'carSize': item.carSize,
                   'carNumber': item.carNumber,
                   'floorNumber': item.floorNumber,
+                  'bayNumber': item.bayNumber,
                   'car_slot_id': item.carSlotId,
                   'allocatedSlotType': item.allocatedSlotType,
                   'isParked':
@@ -275,7 +288,8 @@ class _$ParkingVehicleModelDao extends ParkingVehicleModelDao {
             id: row['id'] as int?,
             carSize: row['carSize'] as String?,
             carNumber: row['carNumber'] as String?,
-            floorNumber: row['floorNumber'] as int?,
+            floorNumber: row['floorNumber'] as String?,
+            bayNumber: row['bayNumber'] as int?,
             carSlotId: row['car_slot_id'] as String?,
             allocatedSlotType: row['allocatedSlotType'] as String?,
             isParked:
@@ -298,7 +312,8 @@ class _$ParkingVehicleModelDao extends ParkingVehicleModelDao {
             id: row['id'] as int?,
             carSize: row['carSize'] as String?,
             carNumber: row['carNumber'] as String?,
-            floorNumber: row['floorNumber'] as int?,
+            floorNumber: row['floorNumber'] as String?,
+            bayNumber: row['bayNumber'] as int?,
             carSlotId: row['car_slot_id'] as String?,
             allocatedSlotType: row['allocatedSlotType'] as String?,
             isParked: row['isParked'] == null

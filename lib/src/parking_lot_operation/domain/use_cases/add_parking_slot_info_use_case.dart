@@ -25,20 +25,53 @@ class AddParkingSlotInfoUseCase extends UseCaseWithParameter<List<int>, ParkingS
     var large = 0;
     var medium = 0;
     var extraLarge = 0;
+    int currentCounter = parameters.existingNumberOfSlotsInFloor;
 
     while (generatedParkingSlots.length < totalNumberOfSlots) {
       var customSLotId = sl<Uuid>().v4();
       if (small < smallSlots) {
-        generatedParkingSlots.add(ParkingSlotEntity(isOccupied: false, floor: floor, slotSize: carSlotTypeValues.reverse[CarSize.small]!, slotID: "$floor:small:$customSLotId"));
+        generatedParkingSlots.add(
+          ParkingSlotEntity(
+            isOccupied: false,
+            floorName: floor,
+            slotSize: carSlotTypeValues.reverse[CarSize.small]!,
+            slotID: "$floor:small:$customSLotId",
+            customBayId: ++currentCounter,
+          ),
+        );
         small++;
       } else if (large < largeSlots) {
-        generatedParkingSlots.add(ParkingSlotEntity(isOccupied: false, floor: floor, slotSize: carSlotTypeValues.reverse[CarSize.large]!, slotID: "$floor:large:$customSLotId"));
+        generatedParkingSlots.add(
+          ParkingSlotEntity(
+            isOccupied: false,
+            floorName: floor,
+            slotSize: carSlotTypeValues.reverse[CarSize.large]!,
+            slotID: "$floor:large:$customSLotId",
+            customBayId: ++currentCounter,
+          ),
+        );
         large++;
       } else if (medium < mediumSlots) {
-        generatedParkingSlots.add(ParkingSlotEntity(isOccupied: false, floor: floor, slotSize: carSlotTypeValues.reverse[CarSize.medium]!, slotID: "$floor:medium:$customSLotId"));
+        generatedParkingSlots.add(
+          ParkingSlotEntity(
+            isOccupied: false,
+            floorName: floor,
+            slotSize: carSlotTypeValues.reverse[CarSize.medium]!,
+            slotID: "$floor:medium:$customSLotId",
+            customBayId: ++currentCounter,
+          ),
+        );
         medium++;
       } else if (extraLarge < extraLargeSlots) {
-        generatedParkingSlots.add(ParkingSlotEntity(isOccupied: false, floor: floor, slotSize: carSlotTypeValues.reverse[CarSize.xl]!, slotID: "$floor:xl:$customSLotId"));
+        generatedParkingSlots.add(
+          ParkingSlotEntity(
+            isOccupied: false,
+            floorName: floor,
+            slotSize: carSlotTypeValues.reverse[CarSize.xl]!,
+            slotID: "$floor:xl:$customSLotId",
+            customBayId: ++currentCounter,
+          ),
+        );
         extraLarge++;
       } else {
         break;

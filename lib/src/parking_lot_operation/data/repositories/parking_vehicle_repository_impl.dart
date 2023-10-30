@@ -50,8 +50,8 @@ class ParkingVehicleRepositoryImpl implements ParkingVehicleRepository {
           if (result != 0) {
             final slotInfo = await _parkingLotLocalDataSource.getAvailableParkingSlotByCarSize(carSize: currentCarSize);
             if (slotInfo != null) {
-              final carAdded =
-                  await _parkingLotLocalDataSource.insertVehicleParkingSlot(vehicle: vehicle, floor: slotInfo.floor, slotId: slotInfo.slotID, allocatedSlotType: slotInfo.slotSize);
+              final carAdded = await _parkingLotLocalDataSource.insertVehicleParkingSlot(
+                  vehicle: vehicle, bayNumber: slotInfo.customBayId, floor: slotInfo.floorName, slotId: slotInfo.slotID, allocatedSlotType: slotInfo.slotSize);
               if (carAdded != 0) {
                 await _parkingLotLocalDataSource.updateAsOccupied(slotId: slotInfo.slotID);
                 final vehiclePass = await _parkingLotLocalDataSource.getParkedVehicleInfoBySlotId(carSlotId: slotInfo.slotID);
@@ -71,7 +71,6 @@ class ParkingVehicleRepositoryImpl implements ParkingVehicleRepository {
     } on LocalException catch (e) {
       return Left(LocalFailure.fromException(e));
     }
-    throw UnimplementedError();
   }
 
   @override
@@ -85,7 +84,7 @@ class ParkingVehicleRepositoryImpl implements ParkingVehicleRepository {
   }
 
   @override
-  ResultingFuture<List<ParkingVehicleEntity>> getAllParkedVehicleSlots() async{
+  ResultingFuture<List<ParkingVehicleEntity>> getAllParkedVehicleSlots() async {
     try {
       final result = await _parkingLotLocalDataSource.getAllParkedVehicleSlots();
       return Right(result!);

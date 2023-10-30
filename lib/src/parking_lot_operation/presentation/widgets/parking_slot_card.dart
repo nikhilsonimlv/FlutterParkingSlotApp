@@ -47,7 +47,7 @@ class ParkingSlotCard extends StatelessWidget {
               const Divider(),
               InfoRow(label: 'Floor Number:', value: '${parkingVehicleEntity?.floorNumber}'),
               const Divider(),
-              InfoRow(label: 'Bay ID:', value: '${parkingVehicleEntity?.carSlotId}'),
+              InfoRow(label: 'Bay ID:', value: '${parkingVehicleEntity?.floorNumber}:${parkingVehicleEntity?.bayNumber}'),
               const Divider(),
               InfoRow(label: 'Allocated Slot Type:', value: '${parkingVehicleEntity?.allocatedSlotType}'),
               const Divider(),

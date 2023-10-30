@@ -9,6 +9,7 @@ import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/add_parki
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/free_parking_slot_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_all_parked_vehicle_slots_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_available_parking_slot_by_car_size_use_case.dart';
+import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_number_of_parking_slots_by_floor_name_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_parked_vehicle_info_by_slot_id_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/get_parking_slots_by_car_size_use_case.dart';
 import 'package:parkingslot/src/parking_lot_operation/domain/use_cases/insert_parking_slot_use_case.dart';
@@ -30,6 +31,7 @@ Future<void> init() async {
           addParkingSlotInfoUseCase: sl(),
           getAvailableParkingSlotByCarSizeUseCase: sl(),
           getParkingSlotsByCarSizeUseCase: sl(),
+          getNumberOfParkingSlotsByFloorNameUseCase: sl(),
         ))
     ..registerFactory(() => ParkVehicleBloc(
           insertParkingSlotUseCase: sl(),
@@ -46,6 +48,7 @@ Future<void> init() async {
     ..registerLazySingleton(() => InsertParkingSlotUseCase(sl()))
     ..registerLazySingleton(() => GetParkedVehicleInfoBySlotIdUseCase(sl()))
     ..registerLazySingleton(() => GetAllParkedVehicleSlotsUseCase(sl()))
+    ..registerLazySingleton(() => GetNumberOfParkingSlotsByFloorNameUseCase(sl()))
     //Repo
     ..registerLazySingleton<ParkingLotRepository>(() => ParkingLotRepositoryImpl(sl()))
     ..registerLazySingleton<ParkingVehicleRepository>(() => ParkingVehicleRepositoryImpl(sl()))

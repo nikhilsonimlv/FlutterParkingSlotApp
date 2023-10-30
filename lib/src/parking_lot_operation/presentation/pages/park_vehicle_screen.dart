@@ -16,6 +16,8 @@ class ParkVehicleScreen extends StatefulWidget {
 }
 
 class _ParkVehicleScreenState extends State<ParkVehicleScreen> {
+  late ScrollController _controller;
+
   void gettingAllParkedVehicleSlots() {
     context.read<ParkVehicleBloc>().add(const GetAllParkedVehicleSlotsEvent());
   }
@@ -23,17 +25,28 @@ class _ParkVehicleScreenState extends State<ParkVehicleScreen> {
   @override
   void initState() {
     super.initState();
+    _controller = ScrollController();
     gettingAllParkedVehicleSlots();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ParkVehicleBloc, ParkVehicleState>(
       listener: (context, state) {
-        if(state.updateSlotList){
+        if (state.updateSlotList) {
           gettingAllParkedVehicleSlots();
-        }
-        if (state.parkingVehicleStatus == ParkingVehicleStatus.parkingVehicleError) {
+        } else if (state.parkingVehicleStatus == ParkingVehicleStatus.allParkedVehicleSlotsLoaded) {
+          if (_controller.hasClients) {
+            final position = _controller.position.maxScrollExtent;
+            _controller.jumpTo(position);
+          }
+        } else if (state.parkingVehicleStatus == ParkingVehicleStatus.parkingVehicleError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage),
@@ -60,22 +73,33 @@ class _ParkVehicleScreenState extends State<ParkVehicleScreen> {
                     Flexible(
                       child: Visibility(
                         visible: state.parkingVehicleStatus == ParkingVehicleStatus.allParkedVehicleSlotsLoaded || state.parkedVehicleList.isNotEmpty,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: state.parkedVehicleList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ParkingSlotCard(
-                              parkingVehicleEntity: state.parkedVehicleList[index],
-                              onPressed: () {
-                                context.read<ParkVehicleBloc>().add(SubmitFreeSlotEvent(parkingVehicleEntity: state.parkedVehicleList[index]));
-                              },
-                            );
-                          },
+                        child: Scrollbar(
+                          controller: _controller,
+                          child: ListView.builder(
+                            reverse: true,
+                            shrinkWrap: true,
+                            itemCount: state.parkedVehicleList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ParkingSlotCard(
+                                parkingVehicleEntity: state.parkedVehicleList[index],
+                                onPressed: () {
+                                  context.read<ParkVehicleBloc>().add(SubmitFreeSlotEvent(parkingVehicleEntity: state.parkedVehicleList[index]));
+                                },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
-                    Visibility(visible:state.parkedVehicleList.isEmpty,child: const Center(child: Text("Not Slots acquired",)),),
+                    Visibility(
+                      visible: state.parkedVehicleList.isEmpty,
+                      child: const Center(
+                          child: Text(
+                        "Not Slots acquired",
+                      )),
+                    ),
                     Container(
+                      margin: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.black, // Border color

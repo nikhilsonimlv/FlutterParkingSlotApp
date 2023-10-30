@@ -18,6 +18,9 @@ abstract class ParkingSlotModelDao {
   @Query('SELECT COUNT(*) FROM ParkingSlotTable WHERE isOccupied = 0 AND slotSize = :slotSize ')
   Future<int?> getNumberOfAvailableParkingSlotByCarSize(String slotSize);
 
+  @Query('SELECT COUNT(*) FROM ParkingSlotTable WHERE floorName = :floorName ')
+  Future<int?> getNumberOfSlotsByFloorName(String floorName);
+
   @delete
   Future<void> deleteParkingSlotItem(ParkingSlotEntity parkingSlot);
 

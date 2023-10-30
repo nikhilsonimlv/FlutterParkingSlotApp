@@ -9,13 +9,15 @@ abstract class ParkingLotLocalDataSource {
 
   Future<List<ParkingSlotEntity>?> getParkingSlotInfo();
 
+  Future<int?> getNumberOfSlotsByFloorName({required String floorName});
+
   Future<ParkingSlotEntity?> getAvailableParkingSlotByCarSize({required CarSize carSize});
 
   Future<int?> getNumberOfParkingSlotByCarSize({required CarSize carSize});
 
   Future<int?> getNumberOfAvailableParkingSlotByCarSize({required CarSize carSize});
 
-  Future<int?> insertVehicleParkingSlot({required Vehicle vehicle, required int floor, required String slotId, required String allocatedSlotType});
+  Future<int?> insertVehicleParkingSlot({required Vehicle vehicle, required int bayNumber, required String floor, required String slotId, required String allocatedSlotType});
 
   Future<int?> updateAsOccupied({required String slotId});
 
@@ -61,13 +63,14 @@ class ParkingLotLocalDataSourceImpl implements ParkingLotLocalDataSource {
   }
 
   @override
-  Future<int?> insertVehicleParkingSlot({required Vehicle vehicle, required int floor, required String slotId, required String allocatedSlotType}) {
+  Future<int?> insertVehicleParkingSlot({required Vehicle vehicle, required int bayNumber, required String floor, required String slotId, required String allocatedSlotType}) {
     return _appDataBase.parkingVehicleModelDao.insertParkingSlot(ParkingVehicleEntity(
       carSize: carSlotTypeValues.reverse[vehicle.carSize]!,
       carNumber: vehicle.numberPlate,
       floorNumber: floor,
       carSlotId: slotId,
       allocatedSlotType: allocatedSlotType,
+      bayNumber: bayNumber,
       isParked: true,
     ));
   }
@@ -100,5 +103,10 @@ class ParkingLotLocalDataSourceImpl implements ParkingLotLocalDataSource {
   @override
   Future<List<ParkingVehicleEntity>?> getAllParkedVehicleSlots() {
     return _appDataBase.parkingVehicleModelDao.getAllParkedVehicleSlots();
+  }
+
+  @override
+  Future<int?> getNumberOfSlotsByFloorName({required String floorName}) {
+    return _appDataBase.parkingSlotModelDao.getNumberOfSlotsByFloorName(floorName);
   }
 }
