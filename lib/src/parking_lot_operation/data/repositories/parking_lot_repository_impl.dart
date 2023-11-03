@@ -14,16 +14,6 @@ class ParkingLotRepositoryImpl implements ParkingLotRepository {
   const ParkingLotRepositoryImpl(this._parkingLotLocalDataSource);
 
   @override
-  ResultingFuture<List<ParkingSlotEntity>> getParkingSlotInfo() async {
-    try {
-      final result = await _parkingLotLocalDataSource.getParkingSlotInfo();
-      return Right(result!!);
-    } on LocalException catch (e) {
-      return Left(LocalFailure.fromException(e));
-    }
-  }
-
-  @override
   ResultingFuture<List<int>> addParkingSlots({required List<ParkingSlotEntity> listOfParkingSlotEntity}) async {
     try {
       var value = await _parkingLotLocalDataSource.addParkingSlot(listParkingSlotModel: ParkingSlotModel.convertEntityListToModelList(listOfParkingSlotEntity));

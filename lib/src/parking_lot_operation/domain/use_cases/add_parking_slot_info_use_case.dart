@@ -28,7 +28,7 @@ class AddParkingSlotInfoUseCase extends UseCaseWithParameter<List<int>, ParkingS
     int currentCounter = parameters.existingNumberOfSlotsInFloor;
 
     while (generatedParkingSlots.length < totalNumberOfSlots) {
-      var customSLotId = sl<Uuid>().v4();
+      var customSLotId = const Uuid().v4();
       if (small < smallSlots) {
         generatedParkingSlots.add(
           ParkingSlotEntity(

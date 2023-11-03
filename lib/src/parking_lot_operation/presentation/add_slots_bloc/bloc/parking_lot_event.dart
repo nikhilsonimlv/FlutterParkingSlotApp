@@ -1,10 +1,7 @@
 part of 'parking_lot_bloc.dart';
 
-abstract class ParkingLotEvent extends Equatable {
+abstract class ParkingLotEvent {
   const ParkingLotEvent();
-
-  @override
-  List<Object> get props => [];
 }
 
 class TabChangeEvent extends ParkingLotEvent {

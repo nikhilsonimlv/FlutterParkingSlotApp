@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+
 class EnumValues<T> {
   Map<String, T> map;
   Map<T, String> reverseMap;
@@ -7,4 +9,10 @@ class EnumValues<T> {
   Map<T, String> get reverse {
     return reverseMap;
   }
+}
+
+
+extension EitherX<L, R> on Either<L, R> {
+  R asRight() => (this as Right).value; //
+  L asLeft() => (this as Left).value;
 }

@@ -7,8 +7,6 @@ import 'package:parkingslot/src/parking_lot_operation/domain/entities/parking_ve
 abstract class ParkingLotLocalDataSource {
   Future<List<int>> addParkingSlot({required List<ParkingSlotModel> listParkingSlotModel});
 
-  Future<List<ParkingSlotEntity>?> getParkingSlotInfo();
-
   Future<int?> getNumberOfSlotsByFloorName({required String floorName});
 
   Future<ParkingSlotEntity?> getAvailableParkingSlotByCarSize({required CarSize carSize});
@@ -40,11 +38,6 @@ class ParkingLotLocalDataSourceImpl implements ParkingLotLocalDataSource {
   @override
   Future<List<int>> addParkingSlot({required List<ParkingSlotModel> listParkingSlotModel}) {
     return _appDataBase.parkingSlotModelDao.insertParkingSlots(listParkingSlotModel);
-  }
-
-  @override
-  Future<List<ParkingSlotEntity>?> getParkingSlotInfo() {
-    return _appDataBase.parkingSlotModelDao.findAllParkingSlots();
   }
 
   @override

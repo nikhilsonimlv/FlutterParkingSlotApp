@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Loading extends StatelessWidget {
@@ -7,6 +6,7 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key:  const Key("loading_container"),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.3),
         borderRadius: const BorderRadius.all(

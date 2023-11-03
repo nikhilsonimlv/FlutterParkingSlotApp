@@ -1,4 +1,3 @@
-const kBaseUrl = 'cde26b5a-728d-4f32-8c7c-534d77a15b77.mock.pstmn.io';
 class AppConstant{
   static const addCarSLots = 'Add Car Slots';
   static const addSlots = 'Add Slots';

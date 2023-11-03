@@ -4,7 +4,6 @@ import 'package:parkingslot/src/parking_lot_operation/domain/entities/parking_sl
 import 'package:parkingslot/src/parking_lot_operation/domain/entities/parking_vehicle_entity.dart';
 
 abstract class ParkingVehicleRepository {
-  const ParkingVehicleRepository();
 
   ResultingFuture<ParkingVehicleEntity> insertParkingSlot({required Vehicle vehicle});
 

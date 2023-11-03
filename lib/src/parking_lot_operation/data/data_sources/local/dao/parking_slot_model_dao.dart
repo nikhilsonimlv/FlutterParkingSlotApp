@@ -3,9 +3,6 @@ import 'package:parkingslot/src/parking_lot_operation/domain/entities/parking_sl
 
 @dao
 abstract class ParkingSlotModelDao {
-  @Query('SELECT * FROM ParkingSlotTable')
-  Future<List<ParkingSlotEntity>?> findAllParkingSlots();
-
   @insert
   Future<List<int>> insertParkingSlots(List<ParkingSlotEntity> parkingSlots);
 

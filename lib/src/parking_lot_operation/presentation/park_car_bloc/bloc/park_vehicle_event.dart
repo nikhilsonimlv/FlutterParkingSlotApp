@@ -1,11 +1,8 @@
 part of 'park_vehicle_bloc.dart';
 
 @immutable
-abstract class ParkVehicleEvent extends Equatable {
+abstract class ParkVehicleEvent  {
   const ParkVehicleEvent();
-
-  @override
-  List<Object> get props => [];
 }
 
 class CarSizeSelectEvent extends ParkVehicleEvent {
